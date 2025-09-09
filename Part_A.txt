@@ -189,3 +189,158 @@ polarplot(theta, E_norm);
 title("Slot Antenna Normalized Radiation Pattern");
 
 
+
+5.HALF-WAVE (Λ/2) DIPOLE: performance analysis in Scilab
+// Computes directivity, gain (with user-set efficiency), and plots radiation pattern
+
+clc; clear;
+
+// -------------------- Parameters --------------------
+eta = 0.95; // radiation efficiency (0..1). Set to 1 for ideal. Typical ~0.9–0.98
+N   = 20000; // angular resolution
+
+// θ is the polar (elevation) angle measured from +z (dipole along z)
+eps = 1.0e-9;                      // avoid singularities at 0 and π
+theta = linspace(eps, %pi - eps, N)'; 
+
+// -------------------- Field and power patterns --------------------
+// Thin λ/2 dipole normalized field (up to a constant factor)
+F = cos((%pi/2)*cos(theta)) ./ sin(theta);
+
+// Normalized power pattern (proportional to |F|^2), scaled so max = 1
+P = abs(F).^2;
+P = P ./ max(P);
+
+// -------------------- Directivity (numerical) --------------------
+// D = 4π * Umax / ∫∫ U(θ,φ) dΩ
+// With azimuthal symmetry: D = 2 / ∫_0^π P(θ) sinθ dθ  (since P is normalized to Umax=1)
+den = inttrap(theta, P .* sin(theta)); // numerical ∫ P(θ) sinθ dθ
+D_lin  = 2.0 / den;          // directivity (linear)
+D_dBi  = 10*log10(D_lin);    // directivity (dBi)
+
+// -------------------- Gain --------------------
+// G = η * D
+G_lin = eta * D_lin;
+G_dBi = 10*log10(G_lin);
+
+// -------------------- Report --------------------
+mprintf("Half-wave dipole analysis\n");
+mprintf("------------------------\n");
+mprintf("Efficiency (η):        %.4f\n", eta);
+mprintf("Directivity (linear):  %.6f\n", D_lin);
+mprintf("Directivity (dBi):     %.3f dBi\n", D_dBi);
+mprintf("Gain (linear):         %.6f\n", G_lin);
+mprintf("Gain (dBi):            %.3f dBi\n", G_dBi);
+mprintf("\nReference (theory):    D ≈ 1.64 (≈ 2.15 dBi) for ideal λ/2 dipole\n");
+
+
+Result:
+Half-wave dipole analysis
+------------------------
+Efficiency (η):        0.9500
+Directivity (linear):  1.640922
+Directivity (dBi):     2.151 dBi
+Gain (linear):         1.558876
+Gain (dBi):            1.928 dBi
+
+Reference (theory):    D ≈ 1.64 (≈ 2.15 dBi) for ideal λ/2 dipole
+
+
+6.HELIX
+clc;
+clear;
+clf;
+// ==============================
+// Helix Antenna Parameters
+// ==============================
+c = 3e8;                // Speed of light (m/s)
+f = 1e9;                // Frequency = 1 GHz
+lambda = c / f;         // Wavelength
+C = lambda;             // Circumference of helix ≈ 1 λ (for axial mode)
+a = C / (2 * %pi);      // Radius of helix
+alpha = 13;             // Pitch angle in degrees
+N = 10;                 // Number of turns
+d = lambda/4;           // Spacing between turns
+S = N * d;              // Total length of helix
+k = 2 * %pi / lambda;   // Wave number
+// ==============================
+// Directivity Calculation (axial mode)
+// Empirical formula: D ≈ 15 * N * (C^2 * S) / (λ^3)
+// ==============================
+D = 15 * N * (C^2 * S) / (lambda^3);
+D_dBi = 10 * log10(D);
+// Gain (assuming efficiency = 100%)
+Gain_dBi = D_dBi;
+// ==============================
+// Radiation Pattern in Axial Mode
+// E(θ) ≈ cos((π/2)*cos(θ)) / sin(θ) for typical antennas,
+// but for helix in axial mode: maximum along θ = 0°
+// We approximate side lobes for θ range
+// ==============================
+theta = 0.0001:0.001:%pi;  // avoid division by zero
+E_theta = cos((%pi/2)*cos(theta)) ./ sin(theta);
+// Normalize
+E_norm = E_theta / max(E_theta);
+P_theta = E_norm.^2;  // Power pattern
+// ==============================
+// Display Results
+// ==============================
+mprintf("Helix Antenna Parameters:\n");
+mprintf("Frequency: %.2f GHz\n", f/1e9);
+mprintf("Wavelength: %.4f m\n", lambda);
+mprintf("Circumference: %.4f m\n", C);
+mprintf("Radius: %.4f m\n", a);
+mprintf("Number of Turns: %d\n", N);
+mprintf("Pitch Angle: %.2f degrees\n", alpha);
+mprintf("Total Length: %.4f m\n", S);
+mprintf("Directivity (linear): %.2f\n", D);
+mprintf("Directivity (dBi): %.2f dB\n", D_dBi);
+mprintf("Gain (dBi): %.2f dB\n", Gain_dBi);
+
+
+RESULT:
+Helix Antenna Parameters:
+Frequency: 1.00 GHz
+Wavelength: 0.3000 m
+Circumference: 0.3000 m
+Radius: 0.0477 m
+Number of Turns: 10
+Pitch Angle: 13.00 degrees
+Total Length: 0.7500 m
+Directivity (linear): 375.00
+Directivity (dBi): 25.74 dB
+Gain (dBi): 25.74 dB
+
+
+ 7.PARABOLIC ANTENNA
+// input parameters for the parabolic antenna
+f = 10e9; // operating frequency (hz)
+c = 3e8; // speed of light (m/s)
+lambda = c / f; // wavelength (m)
+d_diameter = 1; // dish diameter (m)
+eta_aperture = 0.65; // aperture efficiency (dimensionless, typically 0.55 to 0.7)
+
+gain_linear = eta_aperture * (%pi * d_diameter / lambda)^2;
+gain_dbi = 10 * log10(gain_linear); // convert to dbi
+disp("--- antenna gain ---");
+disp(gain_linear, "linear gain:");
+disp(gain_dbi, "gain (dbi):");
+
+area_physical = %pi * (d_diameter / 2)^2;
+area_effective = eta_aperture * area_physical;
+directivity_linear = (4 * %pi * area_effective) / lambda^2;
+disp("--- antenna directivity ---");
+disp(directivity_linear, "linear directivity:");
+
+theta = -%pi/2:0.01:%pi/2; 
+
+u = (%pi * d_diameter / lambda) * sin(theta);
+e_field_pattern = (sin(u) ./ u); 
+
+pattern_db = 20 * log10(abs(e_field_pattern));
+
+plot(theta * 180 / %pi, pattern_db);
+xlabel("angle (degrees)");
+ylabel("normalized power (db)");
+title("parabolic antenna radiation pattern (e-plane)");
+
