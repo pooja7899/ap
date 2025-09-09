@@ -1,0 +1,40 @@
+f = 10e9;    
+D=10^(D_dB/10);  
+loss_dB = 1;        
+D_dB = 20;  
+eta_a= O.511; 
+loss_factor = 10^(-loss_dB/20);  
+c = 3e8;    
+lambda = c / f ; 
+A_ideal = (D * lambda^2) / (4*%pi * eta_a); 
+a_ideal = sqrt(A_ideal);  
+%theta_e = 45 
+%theta_h = 45;  
+La = a_ideal / (2*tan(%theta_e* %pi/180));  
+Lb = a_ideal / (2*tan(%theta_h* %pi/180));  
+a = a_ideal; 
+b = a_ideal; 
+a_lossy = a * loss_factor; 
+b_lossy = b * loss_factor; 
+A_lossy = a_lossy*b_lossy; 
+D_actual_linear=(4 * %pi * A_lossy * eta_a) 
+/(lambda^2); 
+D_actual_dB = 10*log10(D_actual_linear); 
+printf("------------- Horn Antenna Design ------------- 
+\n"); 
+printf("Frequency: %.2f GHz\n", f/1e9); 
+printf("Desired Directivity: %.2f dB\n", D_dB); 
+printf("Loss: %.2f dB\n", loss_dB); 
+printf("------------------ Calculated Values ---------------- "); 
+printf("Ideal aperture area: %.4f sq.m\n", 
+A_ideal); 
+printf("Ideal aperture dimensions: a=%.4f m, b = 
+%.4f m\n", a,b); 
+printf("Flare Lengths: La=%.4f m, Lb = %.4f m\n 
+"La,Lb); 
+printf{("Aperture dimensions with loss: a=%.4f m, 
+b = %.4f m\n", a_lossy, b_lossy); 
+printf("Directivity with losses (linear): %.4fin", 
+D_actual_linear); 
+print{("Directivity with losses (dB): %.4f dB\n", 
+D_actual_dB);

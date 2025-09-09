@@ -1,0 +1,17 @@
+c= 3e8;  
+mu0 = 4 * %pi * 1e-7; 
+sigma_cu=5.8e7;  
+f= 100e6:  
+a= 0.05;  
+r= 0.001;  
+lambda=c/f; 
+omega = 2 * %pi * f;  
+Rr = (20 * (mu0^2) * (omega^4) * (a^4)) / (3 * (c^2)); 
+delta = sqrt(2 / (omega * mu0 * sigma_cu)); 
+R_per_length = 1 / (2 * %pi * r * delta * sigma_cu); 
+L=2 * %pi * a; 
+RI = R_per_length * L; 
+eta = Rr/(Rr+Rl); 
+disp("Radiation resistance (Ohms): " + string(Rr)); 
+disp("Loss resistance (Ohms): " + string(Rl)); 
+disp("Radiation efficiency: " + string(eta));

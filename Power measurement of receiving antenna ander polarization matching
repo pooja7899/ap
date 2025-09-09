@@ -1,0 +1,10 @@
+Pt= 1; 
+Gt = 2;  Gr = 2; f= 2e9;  c = 3e8;  
+lambda = c / f;   
+R = 100;  
+et = [1; 0];   
+er = [1; 0];  
+pol_loss = abs(et' * er)^2; 
+Pr= Pt * Gt * Gr * (lambda / (4 * %pi * R))^2 * pol_loss; 
+disp("Received Power (W):"); 
+disp(Pr);

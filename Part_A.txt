@@ -1,0 +1,253 @@
+1..YAGI-UDA ANTENNA
+clc;
+clear;
+
+// ----------------------
+// Yagi-Uda Antenna Parameters
+// ----------------------
+N = 5;                   // Number of elements (1 reflector + 1 driven + 3 directors)
+efficiency = 0.85;       // Antenna efficiency (0 to 1)
+lambda = 1;              // Normalized wavelength
+
+// Element positions along z-axis (in wavelengths)
+z = [-0.22, 0, 0.16, 0.38, 0.60]; // Reflector, driven, directors
+
+// Wave number
+k = 2*%pi / lambda;
+
+// ----------------------
+// Approximate Directivity and Gain
+// ----------------------
+D_linear = 1.5 * N;       
+D_dBi = 10 * log10(D_linear);
+Gain_dBi = 10*log10(efficiency * D_linear);
+
+// Display results
+disp("Number of elements: " + string(N));
+disp("Estimated Directivity (dBi): " + string(D_dBi));
+disp("Estimated Gain (dBi): " + string(Gain_dBi));
+
+// ----------------------
+// Radiation Pattern Calculation (Array Factor)
+// ----------------------
+theta = 0:0.001:2*%pi;           // Angle range
+AF = zeros(1,length(theta));     // Initialize array factor
+
+for n = 1:N
+    AF = AF + exp(%i * k * z(n) * cos(theta));
+end
+
+E_theta = abs(AF);               // Magnitude of array factor
+E_theta = E_theta / max(E_theta); // Normalize
+
+// ----------------------
+// Plot Polar Radiation Pattern
+// ----------------------
+polarplot(theta, E_theta);
+title("Yagi-Uda Antenna Radiation Pattern (Array Factor)");
+
+Result:
+
+"Number of elements: 5"
+
+  "Estimated Directivity (dBi): 8.7506"
+
+  "Estimated Gain (dBi): 8.0448"
+
+
+
+
+
+
+2.2.Folded dipole antenna
+
+clc;
+clear;
+clf;
+
+// ==============================
+// Folded Dipole Antenna Parameters
+// ==============================
+lambda = 1;                // Normalized wavelength
+L = lambda/2;              // Approx. half-wave folded dipole
+theta = 0:0.001:%pi;       // Theta range
+k = 2*%pi/lambda;          // Wave number
+
+// ==============================
+// Radiation Pattern Calculation
+// ==============================
+Etheta = cos((%pi/2)*cos(theta)) ./ sin(theta);
+
+// Replace NaN and Inf with 0
+Etheta(isnan(Etheta)) = 0;
+Etheta(isinf(Etheta)) = 0;
+
+// Normalize
+Etheta = Etheta / max(Etheta);
+
+// Power pattern
+Ptheta = (Etheta).^2;
+
+// ==============================
+// Directivity Calculation
+// ==============================
+dtheta = theta(2) - theta(1);
+Prad = 2*%pi * inttrap(theta, Ptheta .* sin(theta));
+
+Umax = max(Ptheta);
+
+// Directivity
+D = 4*%pi*Umax / Prad;
+D_dBi = 10*log10(D);
+
+// Assume efficiency
+eta = 0.9;
+G = eta * D;
+G_dBi = 10*log10(G);
+
+// ==============================
+// Display Results
+// ==============================
+disp("Folded Dipole Antenna Performance:");
+disp("Directivity (linear): " + string(D));
+disp("Directivity (dBi): " + string(D_dBi));
+disp("Gain (linear): " + string(G));
+disp("Gain (dBi): " + string(G_dBi));
+
+// ==============================
+// Plot Radiation Pattern
+// ==============================
+polarplot(theta, Ptheta);
+title("Folded Dipole Antenna Radiation Pattern (Normalized)");
+
+Result:
+
+  "Folded Dipole Antenna Performance:"
+
+  "Directivity (linear): 1.6409"
+
+  "Directivity (dBi): 2.1509"
+
+  "Gain (linear): 1.4768"
+
+  "Gain (dBi): 1.6933"
+
+
+
+
+
+
+3.3. LOOP ANTENNA
+// Physical constants
+c = 3e8; // Speed of light in m/s
+mu0 = 4* %pi * 1e-7; // Permeability of free space
+eps0 = 1/(mu0 * c^2); // Permittivity of free space
+
+// Antenna parameters (example for a small circular loop)
+f = 100e6; // Operating frequency in Hz
+lambda = c/f; // Wavelength in meters
+a = 0.01 * lambda; // Radius of the loop (small compared to wavelength)
+N = 1; // Number of turns
+I0 = 1; // Assumed current amplitude in Amperes
+// Theoretical maximum directivity for a small loop (assuming ideal conditions)
+D_max = 1.64; // Approximately 1.64 for a small loop, or 1.5 for a small dipole
+
+// Radiation resistance (simplified for a small loop)
+Rr = 320 * %pi^2 * (N * %pi * a^2 / lambda^2)^2;
+
+// Loss resistance (example, assumes some conductor loss)
+Rl = 0.1; // Example value, depends on conductor material and size
+
+// Radiation efficiency
+e_rad = Rr / (Rr + Rl);
+
+// Gain
+G_max = e_rad * D_max;
+
+disp("Maximum Directivity (D_max): " + string(D_max));
+disp("Radiation Efficiency (e_rad): " + string(e_rad));
+disp("Maximum Gain (G_max): " + string(G_max));
+
+// Azimuthal angle (phi) in radians for 2D pattern in the plane of the loop
+phi = linspace(0, 2*%pi, 360);
+// Electric field magnitude in the far-field (simplified for a small loop)
+E_phi = sin(phi); // Proportional to sin(theta) if theta is measured from loop axis
+
+// Plotting the 2D radiation pattern
+polarplot(phi, abs(E_phi));
+title("Normalized Radiation Pattern of Small Loop Antenna (in loop plane)");
+Result
+--> exec('C:\Users\LENOVO\slot.sci', -1)
+
+  "Maximum Directivity (D_max): 1.64"
+
+  "Radiation Efficiency (e_rad): 0.0031074"
+
+  "Maximum Gain (G_max): 0.0050961"
+
+
+
+
+
+4.slot antenna
+
+5. SLOT ANTENNA PARAMETERS
+clc;
+clear;
+clf;
+
+// ==============================
+// Slot Antenna Parameters
+// ==============================
+lambda = 1;                   // Normalized wavelength
+L = lambda/2;                 // Slot length ~ λ/2
+theta = 0:0.001:%pi;          // Theta from 0 to π
+k = 2*%pi/lambda;             // Wave number
+
+// ==============================
+// Radiation Pattern (E_theta)
+// ==============================
+E_theta = cos((%pi/2)*cos(theta)) ./ sin(theta);
+
+// Handle NaN and Inf values
+E_theta(isnan(E_theta)) = 0;
+E_theta(isinf(E_theta)) = 0;
+
+// Normalize pattern
+E_norm = E_theta ./ max(E_theta);
+
+// ==============================
+// Directivity Calculation
+// ==============================
+U = E_norm.^2;                       // Power pattern
+Prad = 2*%pi * inttrap(theta, U .* sin(theta)); // Total power using inttrap
+Umax = max(U);                       // Max radiation intensity
+
+D = (4*%pi*Umax) / Prad;
+disp("Directivity (linear) = " + string(D));
+disp("Directivity (dB) = " + string(10*log10(D)));
+
+// ==============================
+// Gain Calculation
+// ==============================
+eta = 1; // Efficiency
+G = eta * D;
+disp("Gain (linear) = " + string(G));
+disp("Gain (dB) = " + string(10*log10(G)));
+
+// ==============================
+// Plot Radiation Pattern
+// ==============================
+polarplot(theta, E_norm);
+title("Slot Antenna Normalized Radiation Pattern");
+
+
+Result:
+
+  "Directivity (linear) = 1.6409"
+
+  "Directivity (dB) = 2.1509"
+
+  "Gain (linear) = 1.6409"
+
+  "Gain (dB) = 2.1509"

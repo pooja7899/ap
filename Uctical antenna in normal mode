@@ -1,0 +1,21 @@
+F = 400e6;  c = 3e8;   
+C_ratio = 0.2;    
+C = C _ratio * lambda;  
+radius = C / (2 * %pi);  
+tums = 5;  
+lambda = c / f ; 
+h_ratio = 0.05; 
+H = h_ratio * lambda;  
+disp(['Calculated circumference (C): ', string(C), 'm']); 
+disp([‘Calculated pitch (h):', string(h), ' m'J); 
+disp([‘Calculated radius: ', string(radius), ' m']); 
+disp([‘Number of turns: ', String(turns)]);
+Result:
+
+—> exec('D:\Users\HP\Desktop\qwe.sce'’, -1)
+"Calculated circumference (C):" "0.15" "m"
+“Calculated pitch (h): " "0.0375" "im"
+"Calculated radius: " "0.0238732" "m"
+
+"Number of tums: " "5"
+
