@@ -1,21 +1,28 @@
-F = 400e6;  c = 3e8;   
-C_ratio = 0.2;    
-C = C _ratio * lambda;  
-radius = C / (2 * %pi);  
-tums = 5;  
-lambda = c / f ; 
-h_ratio = 0.05; 
-H = h_ratio * lambda;  
-disp(['Calculated circumference (C): ', string(C), 'm']); 
-disp([‘Calculated pitch (h):', string(h), ' m'J); 
-disp([‘Calculated radius: ', string(radius), ' m']); 
-disp([‘Number of turns: ', String(turns)]);
-Result:
+clc;
+clear;
 
-—> exec('D:\Users\HP\Desktop\qwe.sce'’, -1)
-"Calculated circumference (C):" "0.15" "m"
-“Calculated pitch (h): " "0.0375" "im"
-"Calculated radius: " "0.0238732" "m"
+f = 400e6;             // Operating frequency (Hz)
+c = 3e8;               // Speed of light (m/s)
+lambda = c / f;        // Wavelength
 
-"Number of tums: " "5"
-
+C_ratio = 0.2;         // Circumference ratio
+C = C_ratio * lambda;  // Circumference
+
+radius = C / (2 * %pi); // Radius of helix
+turns = 5;              // Number of turns
+
+h_ratio = 0.05;         // Pitch ratio
+H = h_ratio * lambda;   // Pitch
+
+disp(["Calculated circumference (C): ", string(C), " m"]);
+disp(["Calculated pitch (h): ", string(H), " m"]);
+disp(["Calculated radius: ", string(radius), " m"]);
+disp(["Number of turns: ", string(turns)]);
+
+radius = c/(2*%pi);
+turns = 5;
+theta = linspace(0,2*%pi,360);
+E_theta = abs(sin(theta));
+E_theta = E_theta / max(E_theta);
+polarplot(theta,E_theta);
+xtitle("radiation pattern of helical antenna in normal mode");
