@@ -20,3 +20,17 @@ printf("Director Length: %.3f m\n", l_dir);
 printf("Reflector Spacing: %.3f m\n", s_ref);
 printf("Director Spacing: %.3f m\n", s_dir);
 printf("\nNote: These are approximate values. Fine-tuning may be needed.\n");
+
+lambda = 1;
+k = 2*%pi/lambda;
+N=6;
+d=0.5*lambda;
+beta = 0;
+theta = 0:0.01:2*%pi;
+AF = zeros(theta);
+for i=1:N
+AF = AF + cos(0.5*((i-1)*d*k*cos(theta)+beta));
+end
+AF_mag = abs(AF);
+polarplot(theta,AF_mag);
+title('polar plot of 6 element yagi-uda antenna');
