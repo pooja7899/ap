@@ -8,3 +8,10 @@ pol_loss = abs(et' * er)^2;
 Pr= Pt * Gt * Gr * (lambda / (4 * %pi * R))^2 * pol_loss; 
 disp("Received Power (W):"); 
 disp(Pr);
+
+theta=linspace(0,2%pi,360);
+theta0=%pi/2;
+P0 = 1;
+Pr = P0*cos(theta - theta0).^2;
+polarplot(theta,Pr);
+xtitle('Received power under polarization matching');
