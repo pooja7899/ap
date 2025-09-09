@@ -13,8 +13,8 @@ theta_rad = theta * %pi / 180;
 phi_rad = phi * %pi / 180;
 
 
-E_plane = (cos(theta_rad).^2) .* ( (sin(%pi * a/lambda .* sin(theta_rad))) ./ (%pi * a/lambda .* sin(theta_rad)) ).^2;
-H_plane = (cos(phi_rad).^2) .* ( (sin(%pi * b/lambda .* sin(phi_rad))) ./ (%pi * b/lambda .* sin(phi_rad)) ).^2;
+E_plane = (cos(theta_rad).^2) .*  (sinc(a/lambda * sin(theta_rad))).^2;
+H_plane = (cos(phi_rad).^2) .* (sinc( b/lambda * sin(phi_rad))).^2;
 
 subplot(2,1,1);
 plot(theta, 10*log10(abs(E_plane)));
